@@ -1,0 +1,34 @@
+import sys
+sys.stdout.reconfigure(encoding="utf-8")
+import requests
+from urllib import parse
+
+def get_html(url, timeout=10):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                      "AppleWebKit/537.36 (KHTML, like Gecko) "
+                      "Chrome/79.0.3945.88 Safari/537.36"
+    }
+    try:
+        r = requests.get(url, headers=headers, timeout=timeout)
+        r.encoding = r.apparent_encoding
+        r.raise_for_status()
+        return r.text
+    except Exception as error:
+        print(f"请求网页异常：{error}")
+        return ""
+
+
+if __name__ == "__main__":
+    param = {
+        "mobile": "13626150654",
+        "action": "mobile"
+    }
+    params_str = parse.urlencode(param)
+    base_url = "https://www.ip138.com/mobile.asp?"
+    target_url = base_url + params_str
+
+    html_text = get_html(target_url)
+    with open("phone_result.html", "w", encoding="utf-8") as f:
+        f.write(html_text)
+    print("查询完成，结果保存到 phone_result.html")
